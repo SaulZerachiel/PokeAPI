@@ -1,0 +1,110 @@
+﻿@page "/"
+@inject PokemonService PokemonSvc
+@inject FavoriService FavoriSvc
+@inject AuthService Auth
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h1>Recherche de Pokémon</h1>
+
+@if (afficherPopup)
+{
+    <div style="position:fixed; top:20px; right:20px; background:green; 
+                color:black; padding:15px; border-radius:8px;">
+             Pokémon ajouté aux favoris !
+    </div>
+}
+
+@if (!Auth.EstConnecte)
+{
+    <p><a href="/login">Connectez-vous</a> pour utiliser l'application.</p>
+}
+else
+{
+    <p>Bienvenue, @Auth.UtilisateurActuel ! <button @onclick="SeDeconnecter">Déconnexion</button></p>
+
+    <div>
+        <input @bind="recherche" placeholder="Entrez un nom (ex: pikachu)" />
+        <button @onclick="Chercher">Rechercher</button>
+    </div>
+
+    @if (chargement)
+    {
+        <p>Chargement...</p>
+    }
+    else if (pokemon != null)
+    {
+        <div style="border: 1px solid black; padding: 10px; margin-top: 10px;">
+            <h2>@Majuscule(pokemon.Name)</h2>
+            <img src="@pokemon.ImageUrl" alt="@pokemon.Name" />
+            <p>Taille : @pokemon.Height</p>
+            <p>Poids : @pokemon.Weight</p>
+            <p>Type : @string.Join(", ", pokemon.Types)</p>
+            <button @onclick="AjouterAuxFavoris">Ajouter aux favoris</button>
+        </div>
+    }
+    else if (erreur != "")
+    {
+        <p style="color:red">@erreur</p>
+    }
+}
+
+@code {
+    string recherche = "";
+    Pokemon? pokemon = null;
+    bool chargement = false;
+    string erreur = "";
+    bool afficherPopup = false;
+
+    string Majuscule(string mot)
+    {
+        if (string.IsNullOrEmpty(mot)) return mot;
+        return char.ToUpper(mot[0]) + mot.Substring(1);
+    }
+
+    async Task Chercher()
+    {
+        erreur = "";
+        pokemon = null;
+        chargement = true;
+
+        try
+        {
+            pokemon = await PokemonSvc.GetPokemon(recherche);
+            if (pokemon == null)
+            {
+                erreur = "Pokémon non trouvé.";
+            }
+        }
+        catch
+        {
+            erreur = "Erreur lors de la recherche.";
+        }
+
+        chargement = false;
+    }
+
+    async Task AjouterAuxFavoris()
+    {
+        if (pokemon != null)
+        {
+            var favori = new Favori
+            {
+                Nom = pokemon.Name,
+                Note = "",
+                ImageUrl = pokemon.ImageUrl
+            };
+            FavoriSvc.AjouterFavori(favori);
+
+            afficherPopup = true;
+            await Task.Delay(2000);
+            afficherPopup = false;
+        }
+    }
+
+    void SeDeconnecter()
+    {
+        Auth.Deconnecter();
+        Nav.NavigateTo("/login");
+    }
+}

@@ -1,0 +1,44 @@
+@page "/login"
+@using APIProject.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h2>Connexion</h2>
+
+@if (erreur != "")
+{
+    <p style="color:red">@erreur</p>
+}
+
+<div>
+    <label>Nom d'utilisateur :</label>
+    <input @bind="username" placeholder="admin" />
+</div>
+
+<div>
+    <label>Mot de passe :</label>
+    <input type="password" @bind="password" placeholder="1234" />
+</div>
+
+<button @onclick="SeConnecter">Se connecter</button>
+
+@code {
+    string username = "";
+    string password = "";
+    string erreur = "";
+
+    void SeConnecter()
+    {
+        bool succes = Auth.Connecter(username, password);
+
+        if (succes)
+        {
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            erreur = "Nom d'utilisateur ou mot de passe incorrect.";
+        }
+    }
+}

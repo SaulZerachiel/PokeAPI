@@ -1,0 +1,69 @@
+@page "/favoris"
+@using APIProject.Services
+@inject FavoriService FavoriSvc
+@inject AuthService Auth
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h1>Mes Favoris</h1>
+
+@if (!Auth.EstConnecte)
+{
+    <p>Tu dois être <a href="/login">connecté</a>.</p>
+}
+else
+{
+    var favoris = FavoriSvc.GetFavoris();
+
+    @if (favoris.Count == 0)
+    {
+        <p>Aucun favori pour l'instant.</p>
+    }
+    else
+    {
+        @foreach (var f in favoris)
+        {
+            <div style="border: 1px solid gray; padding: 10px; margin: 5px;">
+                <img src="@f.ImageUrl" alt="@f.Nom" />
+                <h3>@f.Nom</h3>
+
+                @if (idEnEdition == f.Id)
+                {
+                    <input @bind="noteEnEdition" placeholder="Ta note..." />
+                    <button @onclick="() => SauvegarderNote(f.Id)">Sauvegarder</button>
+                    <button @onclick="AnnulerEdition">Annuler</button>
+                }
+                else
+                {
+                    <p>Note : @(f.Note == "" ? "Aucune note" : f.Note)</p>
+                    <button @onclick="() => CommencerEdition(f.Id, f.Note)">Modifier</button>
+                    <button @onclick="() => FavoriSvc.SupprimerFavori(f.Id)">Supprimer</button>
+                }
+            </div>
+        }
+    }
+}
+
+@code {
+    int idEnEdition = -1;
+    string noteEnEdition = "";
+
+    void CommencerEdition(int id, string noteActuelle)
+    {
+        idEnEdition = id;
+        noteEnEdition = noteActuelle;
+    }
+
+    void SauvegarderNote(int id)
+    {
+        FavoriSvc.ModifierNote(id, noteEnEdition);
+        idEnEdition = -1;
+        noteEnEdition = "";
+    }
+
+    void AnnulerEdition()
+    {
+        idEnEdition = -1;
+        noteEnEdition = "";
+    }
+}
