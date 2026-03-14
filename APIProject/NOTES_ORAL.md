@@ -36,8 +36,8 @@ Reponse: pour garder un etat partage simple pendant la vie de l'appli (connexion
 - `Connecter(...)` verifie les comptes crees en memoire pendant la session.
 - `Deconnecter()` remet l'etat a zero.
 
-Limite assumee:
-- Pas de vrai systeme d'auth (hash, token, DB). C'est volontaire pour un projet d'apprentissage.
+Limite assumée:
+- Pas de vrai systeme d'auth (hash, token, DB).
 
 ### Services/PokemonServices.cs
 - Fait l'appel HTTP vers `https://pokeapi.co/api/v2/pokemon/{nom}`.
@@ -91,30 +91,14 @@ Point important:
 - Actions: modifier note, supprimer favori.
 
 ### Components/Pages/Login.razor
-- Formulaire login tres simple.
+- Formulaire login basique.
 - Appel `Auth.Connecter(...)` puis redirection vers `/` si succes.
 
-## 4. Choix CSS (ce que j'ai modifie)
-- Oui, j'ai ajoute un CSS assez fourni mais volontairement simple a maintenir.
+## 4. CSS
 - Tout est centralise dans `wwwroot/app.css` avec variables (`:root`).
-- J'ai remplace les styles inline par des classes (`card-box`, `search-row`, `fav-item`, etc.).
-- Le layout a ete modernise via `MainLayout.razor.css` + `NavMenu.razor.css`.
+- J'ai remplacé les styles inline par des classes (`card-box`, `search-row`, `fav-item`, etc.).
+- Le layout a été modernisé via `MainLayout.razor.css` + `NavMenu.razor.css`.
 - Responsive: adaptation mobile (grilles en 1 colonne, champs largeur 100%).
 
-Phrase simple a dire:
-"J'ai d'abord factorise le style en classes reutilisables, puis j'ai harmonise les pages autour d'une petite charte visuelle pour eviter le template brut de base."
-
-## 5. Limites actuelles (important a assumer)
-- Authentification hardcodee.
-- Donnees en memoire (perdues au redemarrage).
-- Pas de persistance base de donnees.
-- Gestion d'erreur API encore basique.
-
-## 6. Evolutions possibles
-- Ajouter une vraie auth (Identity/JWT).
-- Ajouter une base SQLite/SQL Server pour les favoris.
-- Eviter les doublons de favoris.
-- Ajouter validation de formulaire et etats de chargement plus fins.
-
-## 7. Mini script oral (30-45 sec)
-"Le projet est une appli Blazor Server. La navigation et le layout sont dans les composants Razor, la logique est dans des services injectes par DI. `PokemonService` appelle PokeAPI et mappe la reponse vers mon modele interne `Pokemon`. `FavoriService` gere une liste en memoire avec ajout, suppression et edition de note. `AuthService` simule une connexion simple pour proteger les ecrans. J'ai aussi refactorise le CSS: j'ai retire les styles inline et construit un style global propre, avec un layout responsive, pour sortir du template Blazor standard."
+## 5. Oral
+Le projet est une appli Blazor Server. La navigation et le layout sont dans les composants Razor, la logique est dans des services injectes par DI. `PokemonService` appelle PokeAPI et mappe la reponse vers mon modele interne `Pokemon`. `FavoriService` gere une liste en memoire avec ajout, suppression et edition de note. `AuthService` simule une connexion simple pour proteger les écrans.
