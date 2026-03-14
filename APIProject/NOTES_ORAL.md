@@ -7,9 +7,6 @@ Vidéo Youtube : https://www.youtube.com/watch?v=HVbUyOK7wxU
 - Objectif: chercher un Pokemon via PokeAPI, puis l'ajouter en favoris.
 - Le stockage des favoris est en memoire (pas de base de donnees).
 
-Phrase simple a dire:
-"Le projet separe bien UI, logique metier et modeles. Les pages Razor gerent l'affichage, les services font la logique, et les modeles transportent les donnees."
-
 ## 2. Architecture rapide
 - `Program.cs`: configuration globale, DI, pipeline HTTP.
 - `Services/`: logique applicative (`AuthService`, `PokemonService`, `FavoriService`).
@@ -27,17 +24,10 @@ Phrase simple a dire:
 - Configure le pipeline (HTTPS, fichiers statiques, antiforgery, gestion d'erreurs).
 - Mappe le composant racine `App`.
 
-Ce qu'on peut te demander:
-- Pourquoi singleton ?
-Reponse: pour garder un etat partage simple pendant la vie de l'appli (connexion/favoris).
-
 ### Services/AuthService.cs
 - Gere un etat de connexion minimal.
 - `Connecter(...)` verifie les comptes crees en memoire pendant la session.
 - `Deconnecter()` remet l'etat a zero.
-
-Limite assumée:
-- Pas de vrai systeme d'auth (hash, token, DB).
 
 ### Services/PokemonServices.cs
 - Fait l'appel HTTP vers `https://pokeapi.co/api/v2/pokemon/{nom}`.
