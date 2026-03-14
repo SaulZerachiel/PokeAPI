@@ -4,32 +4,55 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<h2>Connexion</h2>
+<section class="page-shell">
+    <h2>Connexion</h2>
 
-@if (erreur != "")
-{
-    <p style="color:red">@erreur</p>
-}
+    @if (message != "")
+    {
+        <p class="notice">@message</p>
+    }
 
-<div>
-    <label>Nom d'utilisateur :</label>
-    <input @bind="username" placeholder="admin" />
-</div>
+    <div class="card-box login-box">
+        <div class="stack-field">
+            <label>Nom d'utilisateur :</label>
+            <input @bind="username" placeholder="Nom d'utilisateur" />
+        </div>
 
-<div>
-    <label>Mot de passe :</label>
-    <input type="password" @bind="password" placeholder="1234" />
-</div>
+        <div class="stack-field">
+            <label>Mot de passe :</label>
+            <input type="password" @bind="password" placeholder="Mot de passe" />
+        </div>
 
-<button @onclick="SeConnecter">Se connecter</button>
+        <button @onclick="SeConnecter">Se connecter</button>
+    </div>
+
+    <h2>Créer un compte</h2>
+    <div class="card-box login-box">
+        <div class="stack-field">
+            <label>Nouveau nom d'utilisateur :</label>
+            <input @bind="newUsername" placeholder="Ton p'tit nom" />
+        </div>
+
+        <div class="stack-field">
+            <label>Mot de passe :</label>
+            <input type="password" @bind="newPassword" placeholder="Ton mot de passe" />
+        </div>
+
+        <button @onclick="CreerCompte">Créer le compte</button>
+    </div>
+</section>
 
 @code {
+    // Champs relies au formulaire de connexion.
     string username = "";
     string password = "";
-    string erreur = "";
+    string newUsername = "";
+    string newPassword = "";
+    string message = "";
 
     void SeConnecter()
     {
+        // On delegue la verification au service d'authentification.
         bool succes = Auth.Connecter(username, password);
 
         if (succes)
@@ -38,7 +61,24 @@
         }
         else
         {
-            erreur = "Nom d'utilisateur ou mot de passe incorrect.";
+            message = "Nom d'utilisateur ou mot de passe incorrect.";
+        }
+    }
+
+    void CreerCompte()
+    {
+        bool succes = Auth.CreerCompte(newUsername, newPassword, out var erreurCreation);
+        if (succes)
+        {
+            message = "Compte créé. Tu peux maintenant te connecter.";
+            username = newUsername;
+            password = "";
+            newUsername = "";
+            newPassword = "";
+        }
+        else
+        {
+            message = erreurCreation;
         }
     }
 }

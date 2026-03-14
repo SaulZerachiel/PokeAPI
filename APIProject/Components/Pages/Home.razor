@@ -5,51 +5,62 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<h1>Recherche de Pokémon</h1>
+<section class="page-shell">
+    <h1>Recherche de Pokemon</h1>
 
-@if (afficherPopup)
-{
-    <div style="position:fixed; top:20px; right:20px; background:green; 
-                color:black; padding:15px; border-radius:8px;">
-             Pokémon ajouté aux favoris !
-    </div>
-}
-
-@if (!Auth.EstConnecte)
-{
-    <p><a href="/login">Connectez-vous</a> pour utiliser l'application.</p>
-}
-else
-{
-    <p>Bienvenue, @Auth.UtilisateurActuel ! <button @onclick="SeDeconnecter">Déconnexion</button></p>
-
-    <div>
-        <input @bind="recherche" placeholder="Entrez un nom (ex: pikachu)" />
-        <button @onclick="Chercher">Rechercher</button>
-    </div>
-
-    @if (chargement)
+    @if (afficherPopup)
     {
-        <p>Chargement...</p>
-    }
-    else if (pokemon != null)
-    {
-        <div style="border: 1px solid black; padding: 10px; margin-top: 10px;">
-            <h2>@Majuscule(pokemon.Name)</h2>
-            <img src="@pokemon.ImageUrl" alt="@pokemon.Name" />
-            <p>Taille : @pokemon.Height</p>
-            <p>Poids : @pokemon.Weight</p>
-            <p>Type : @string.Join(", ", pokemon.Types)</p>
-            <button @onclick="AjouterAuxFavoris">Ajouter aux favoris</button>
+        <div class="toast-success">
+            Pokemon ajouté aux favoris !
         </div>
     }
-    else if (erreur != "")
+
+    @if (!Auth.EstConnecte)
     {
-        <p style="color:red">@erreur</p>
+        <div class="card-box">
+            <p><a href="/login">Connecte-toi</a> pour utiliser l'application.</p>
+        </div>
     }
-}
+    else
+    {
+        <div class="card-box">
+            <p>
+                Bienvenue sur mon API, @Auth.UtilisateurActuel !
+                <button class="ghost" @onclick="SeDeconnecter">Déconnexion</button>
+            </p>
+
+            <div class="search-row">
+                <input @bind="recherche" placeholder="Entrez un nom (ex: pikachu)" />
+                <button @onclick="Chercher">Rechercher</button>
+            </div>
+
+            @if (chargement)
+            {
+                <p class="muted">Chargement...</p>
+            }
+            else if (pokemon != null)
+            {
+                <div class="pokemon-card">
+                    <img src="@pokemon.ImageUrl" alt="@pokemon.Name" />
+                    <div>
+                        <h2>@Majuscule(pokemon.Name)</h2>
+                        <p>Taille : @pokemon.Height</p>
+                        <p>Poids : @pokemon.Weight</p>
+                        <p>Type : @string.Join(", ", pokemon.Types)</p>
+                        <button @onclick="AjouterAuxFavoris">Ajouter aux favoris</button>
+                    </div>
+                </div>
+            }
+            else if (erreur != "")
+            {
+                <p class="notice">@erreur</p>
+            }
+        </div>
+    }
+</section>
 
 @code {
+    // Etat local de la page (saisie, resultat, feedback utilisateur).
     string recherche = "";
     Pokemon? pokemon = null;
     bool chargement = false;
@@ -64,6 +75,7 @@ else
 
     async Task Chercher()
     {
+        // On reset l'etat avant chaque nouvelle requete.
         erreur = "";
         pokemon = null;
         chargement = true;
@@ -78,6 +90,7 @@ else
         }
         catch
         {
+            // Ici on gere surtout les erreurs reseau/API.
             erreur = "Erreur lors de la recherche.";
         }
 
@@ -88,6 +101,7 @@ else
     {
         if (pokemon != null)
         {
+            // On convertit le Pokemon courant en Favori persistant en memoire.
             var favori = new Favori
             {
                 Nom = pokemon.Name,
@@ -96,6 +110,7 @@ else
             };
             FavoriSvc.AjouterFavori(favori);
 
+            // Petit feedback visuel temporaire.
             afficherPopup = true;
             await Task.Delay(2000);
             afficherPopup = false;

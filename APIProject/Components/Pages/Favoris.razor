@@ -5,57 +5,74 @@
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<h1>Mes Favoris</h1>
+<section class="page-shell">
+    <h1>Mes Favoris</h1>
 
-@if (!Auth.EstConnecte)
-{
-    <p>Tu dois être <a href="/login">connecté</a>.</p>
-}
-else
-{
-    var favoris = FavoriSvc.GetFavoris();
-
-    @if (favoris.Count == 0)
+    @if (!Auth.EstConnecte)
     {
-        <p>Aucun favori pour l'instant.</p>
+        <div class="card-box">
+            <p>Tu dois être <a href="/login">connecté(e)</a>.</p>
+        </div>
     }
     else
     {
-        @foreach (var f in favoris)
-        {
-            <div style="border: 1px solid gray; padding: 10px; margin: 5px;">
-                <img src="@f.ImageUrl" alt="@f.Nom" />
-                <h3>@f.Nom</h3>
+        var favoris = FavoriSvc.GetFavoris();
 
-                @if (idEnEdition == f.Id)
+        @if (favoris.Count == 0)
+        {
+            <div class="card-box">
+                <p class="muted">Aucun favori pour l'instant.</p>
+            </div>
+        }
+        else
+        {
+            <div class="fav-grid">
+                @foreach (var f in favoris)
                 {
-                    <input @bind="noteEnEdition" placeholder="Ta note..." />
-                    <button @onclick="() => SauvegarderNote(f.Id)">Sauvegarder</button>
-                    <button @onclick="AnnulerEdition">Annuler</button>
-                }
-                else
-                {
-                    <p>Note : @(f.Note == "" ? "Aucune note" : f.Note)</p>
-                    <button @onclick="() => CommencerEdition(f.Id, f.Note)">Modifier</button>
-                    <button @onclick="() => FavoriSvc.SupprimerFavori(f.Id)">Supprimer</button>
+                    <div class="card-box fav-item">
+                        <img src="@f.ImageUrl" alt="@f.Nom" />
+                        <div>
+                            <h3>@f.Nom</h3>
+
+                            @if (idEnEdition == f.Id)
+                            {
+                                <input @bind="noteEnEdition" placeholder="Ta note..." />
+                                <div class="actions">
+                                    <button @onclick="() => SauvegarderNote(f.Id)">Sauvegarder</button>
+                                    <button class="ghost" @onclick="AnnulerEdition">Annuler</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <p>Note : @(f.Note == "" ? "Aucune note" : f.Note)</p>
+                                <div class="actions">
+                                    <button @onclick="() => CommencerEdition(f.Id, f.Note)">Modifier</button>
+                                    <button class="danger" @onclick="() => FavoriSvc.SupprimerFavori(f.Id)">Supprimer</button>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 }
             </div>
         }
     }
-}
+</section>
 
 @code {
+    // idEnEdition indique quel favori est actuellement en mode edition.
     int idEnEdition = -1;
     string noteEnEdition = "";
 
     void CommencerEdition(int id, string noteActuelle)
     {
+        // On pre-remplit l'input avec la note existante.
         idEnEdition = id;
         noteEnEdition = noteActuelle;
     }
 
     void SauvegarderNote(int id)
     {
+        // Sauvegarde de la note puis sortie du mode edition.
         FavoriSvc.ModifierNote(id, noteEnEdition);
         idEnEdition = -1;
         noteEnEdition = "";

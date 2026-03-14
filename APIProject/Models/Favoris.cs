@@ -1,5 +1,6 @@
 namespace APIProject.Models
 {
+    // Entite locale pour stocker les favoris de l'utilisateur.
     public class Favori
     {
         public int Id { get; set; }

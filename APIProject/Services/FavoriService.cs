@@ -4,6 +4,7 @@ namespace APIProject.Services
 {
     public class FavoriService
     {
+        // Stockage en memoire: pas de base de donnees dans cette version.
         private List<Favori> _favoris = new List<Favori>();
         private int _prochainId = 1;
 
@@ -14,6 +15,7 @@ namespace APIProject.Services
 
         public void AjouterFavori(Favori favori)
         {
+            // Id auto-incremente pour identifier facilement les elements.
             favori.Id = _prochainId;
             _prochainId++;
             _favoris.Add(favori);
@@ -24,6 +26,7 @@ namespace APIProject.Services
             var favori = _favoris.FirstOrDefault(f => f.Id == id);
             if (favori != null)
             {
+                // Edition locale d'une note associee au favori.
                 favori.Note = nouvelleNote;
             }
         }

@@ -1,5 +1,6 @@
 namespace APIProject.Models
 {
+    // Modele simplifie utilise par l'UI apres mapping depuis l'API externe.
     public class Pokemon
     {
         public string Name { get; set; } = "";

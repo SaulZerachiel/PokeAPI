@@ -14,12 +14,14 @@ namespace APIProject.Services
 
         public async Task<Pokemon?> GetPokemon(string nom)
         {
+            // Appel REST a l'API publique PokeAPI.
             var reponse = await _http.GetFromJsonAsync<PokemonApiReponse>(
                 $"https://pokeapi.co/api/v2/pokemon/{nom.ToLower()}"
             );
 
             if (reponse == null) return null;
 
+            // Mapping du format externe (DTO API) vers le modele interne Pokemon.
             return new Pokemon
             {
                 Name = reponse.Name,
@@ -41,6 +43,7 @@ namespace APIProject.Services
         }
         private class PokemonApiReponse
         {
+            // Ces classes internes representent uniquement la reponse JSON distante.
             public string Name { get; set; } = "";
             public int Height { get; set; }
             public int Weight { get; set; }
