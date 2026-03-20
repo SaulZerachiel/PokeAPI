@@ -3,7 +3,7 @@ using APIProject.Models;
 
 namespace APIProject.Services
 {
-    public class PokemonService
+    public class PokemonService // Constructeur 
     {
         private readonly HttpClient _http;
 
@@ -43,7 +43,7 @@ namespace APIProject.Services
         }
         private class PokemonApiReponse
         {
-            // Ces classes internes representent uniquement la reponse JSON distante.
+            // Ces classes internes representent uniquement la reponse JSON distante. Ce sont aussi des propriétés.
             public string Name { get; set; } = "";
             public int Height { get; set; }
             public int Weight { get; set; }

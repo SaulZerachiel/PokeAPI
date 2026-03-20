@@ -16,7 +16,7 @@
     }
     else
     {
-        var favoris = FavoriSvc.GetFavoris();
+        var favoris = FavoriSvc.GetFavoris(Auth.UtilisateurActuel);
 
         @if (favoris.Count == 0)
         {
@@ -47,7 +47,7 @@
                                 <p>Note : @(f.Note == "" ? "Aucune note" : f.Note)</p>
                                 <div class="actions">
                                     <button @onclick="() => CommencerEdition(f.Id, f.Note)">Modifier</button>
-                                    <button class="danger" @onclick="() => FavoriSvc.SupprimerFavori(f.Id)">Supprimer</button>
+                                    <button class="danger" @onclick="() => FavoriSvc.SupprimerFavori(Auth.UtilisateurActuel, f.Id)">Supprimer</button>
                                 </div>
                             }
                         </div>
@@ -73,7 +73,7 @@
     void SauvegarderNote(int id)
     {
         // Sauvegarde de la note puis sortie du mode edition.
-        FavoriSvc.ModifierNote(id, noteEnEdition);
+        FavoriSvc.ModifierNote(Auth.UtilisateurActuel, id, noteEnEdition);
         idEnEdition = -1;
         noteEnEdition = "";
     }

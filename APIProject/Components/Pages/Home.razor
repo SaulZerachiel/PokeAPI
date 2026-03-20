@@ -101,6 +101,12 @@
     {
         if (pokemon != null)
         {
+            var utilisateur = Auth.UtilisateurActuel;
+            if (string.IsNullOrWhiteSpace(utilisateur))
+            {
+                return;
+            }
+
             // On convertit le Pokemon courant en Favori persistant en memoire.
             var favori = new Favori
             {
@@ -108,7 +114,7 @@
                 Note = "",
                 ImageUrl = pokemon.ImageUrl
             };
-            FavoriSvc.AjouterFavori(favori);
+            FavoriSvc.AjouterFavori(utilisateur, favori);
 
             // Petit feedback visuel temporaire.
             afficherPopup = true;
